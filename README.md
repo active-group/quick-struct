@@ -1,4 +1,4 @@
-# QuickStruct
+# QuickStruct [![Build Status](https://travis-ci.org/active-group/quick-struct.svg?branch=master)](https://travis-ci.org/active-group/quick-struct)
 
 Macro to create datastructures as structs without boilerplate.
 
