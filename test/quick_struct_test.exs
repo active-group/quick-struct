@@ -2,22 +2,22 @@ defmodule QuickStructTest do
   use ExUnit.Case
 
   defmodule User do
-    use QuickStruct, [firstname: String.t, name: String.t]
+    use QuickStruct, firstname: String.t(), name: String.t()
   end
 
   test "make user struct" do
     assert User.make("Jon", "Adams") == %User{firstname: "Jon", name: "Adams"}
-    assert User.make([name: "Adams", firstname: "Jon"]) == %User{firstname: "Jon", name: "Adams"}
+    assert User.make(name: "Adams", firstname: "Jon") == %User{firstname: "Jon", name: "Adams"}
   end
 
   test "make user struct fails if an additional key is given or a key is missing" do
     assert_raise KeyError,
-      ~r/key :second_name not found in/,
-      fn -> User.make([second_name: "Karl", firstname: "Jon", name: "Adams"]) end
+                 ~r/key :second_name not found in/,
+                 fn -> User.make(second_name: "Karl", firstname: "Jon", name: "Adams") end
 
     assert_raise ArgumentError,
-      ~r/the following keys must also be given.*:firstname/,
-      fn -> User.make([name: "Smith"]) end
+                 ~r/the following keys must also be given.*:firstname/,
+                 fn -> User.make(name: "Smith") end
   end
 
   defmodule Pair do
@@ -27,11 +27,11 @@ defmodule QuickStructTest do
   test "make pair without type specifications" do
     assert Pair.make(1, 2) == %Pair{a: 1, b: 2}
     assert Pair.make("Hello", "World") == %Pair{a: "Hello", b: "World"}
-    assert Pair.make([a: [1, 2], b: [3, 4]]) == %Pair{a: [1, 2], b: [3, 4]}
+    assert Pair.make(a: [1, 2], b: [3, 4]) == %Pair{a: [1, 2], b: [3, 4]}
   end
 
   defmodule Single do
-    use QuickStruct, [el: String.t]
+    use QuickStruct, el: String.t()
   end
 
   test "make single struct" do
@@ -39,7 +39,7 @@ defmodule QuickStructTest do
   end
 
   require QuickStruct
-  QuickStruct.define_module Nofields, []
+  QuickStruct.define_module(Nofields, [])
   ## This is shorthand for:
   # defmodule Nofields do
   #   use QuickStruct, []
@@ -82,15 +82,17 @@ defmodule QuickStructTest do
   end
 
   defmodule AreaOrSpace do
-    use QuickStruct, [x: float(),
-                 y: float(),
-                 z: float()]
-    QuickStruct.constructor_with_defaults([z: 0])
+    use QuickStruct,
+      x: float(),
+      y: float(),
+      z: float()
+
+    QuickStruct.constructor_with_defaults(z: 0)
   end
 
   test "constructor with defaults works" do
-    assert AreaOrSpace.make_with_defaults([x: 4, y: -1]) == %AreaOrSpace{x: 4, y: -1, z: 0}
-    assert AreaOrSpace.make(1, 2, 0) == AreaOrSpace.make_with_defaults([x: 1, y: 2])
+    assert AreaOrSpace.make_with_defaults(x: 4, y: -1) == %AreaOrSpace{x: 4, y: -1, z: 0}
+    assert AreaOrSpace.make(1, 2, 0) == AreaOrSpace.make_with_defaults(x: 1, y: 2)
   end
 
   doctest QuickStruct
