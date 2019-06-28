@@ -6,11 +6,11 @@ defmodule QuickStruct do
   You have to "use" this module and give a list of fields or a
   keyword list with fields and specs to create a struct.
 
-  As an alternative you can create a module and a struct together,
-  therefor require QuickStruct and call `define_module/2`.
+  As an alternative you can create a module and a struct together;
+  just require QuickStruct and call `define_module/2`.
 
   ## Examples
-  Imagine you define the following structs:
+  Assume you define the following structs:
 
   ```
   defmodule QuickStructTest.User do
@@ -28,8 +28,8 @@ defmodule QuickStruct do
   QuickStruct.define_module QuickStructTest.User, [firstname: String.t, name: String.t]
   QuickStruct.define_module QuickStructTest.Pair, [:first, :second]
   ```
-  To create a struct you can either use `make/1` with a keyword-list to specify
-  the fields or use `make`, where each argument is one field (order matters):
+  To create a struct you can either use `make/1` with a keyword list to specify
+  the fields, or use `make`, where each argument is one field (order matters):
 
       iex> alias QuickStructTest.User
       iex> User.make("Jon", "Adams")
@@ -99,8 +99,8 @@ defmodule QuickStruct do
     types = Keyword.values(fieldspecs)
     args = Enum.map(fields, &{&1, [], __MODULE__})
     # This does something similar to Macro.generate_arguments/2, but
-    # with the original fieldnames as arguments (better for generated
-    # documentation of the function)
+    # with the original field names as arguments (better for generated
+    # documentation of the function).
 
     quote do
       @type t :: %__MODULE__{unquote_splicing(fieldspecs)}
@@ -142,7 +142,7 @@ defmodule QuickStruct do
   end
 
   @doc """
-  Defines a module and a struct with the given field-list.
+  Defines a module together with a struct with the given field list.
 
   ## Example
 
@@ -170,7 +170,7 @@ defmodule QuickStruct do
   end
 
   @doc """
-  Generates a function, which will generate a struct with some given default values.
+  Generates a function which will generate a struct with some given default values.
 
   ## Example
   ```

@@ -1,6 +1,6 @@
 # QuickStruct [![Build Status](https://travis-ci.org/active-group/quick-struct.svg?branch=master)](https://travis-ci.org/active-group/quick-struct)
 
-Macro to create datastructures as structs without boilerplate.
+Macro to create data structures as structs with less boilerplate.
 
 ## Installation
 
@@ -12,10 +12,9 @@ def deps do
 end
 ```
 
-and run `$ mix deps.get`. 
+and run `$ mix deps.get`.
 
 ## Usage
-
 
 ```elixir
 defmodule User do
@@ -23,26 +22,28 @@ defmodule User do
 end
 ```
 
-Now you can use `User.t` in `@type` and `@spec` declarations. To create instances of your datastructure, use one of the following options:
+Now you can use `User.t` in `@type` and `@spec` declarations. To create
+instances of your data structure, use one of the following options:
 ```elixir
 iex(3)> User.make("Jon", "Adams")
 %User{firstname: "Jon", name: "Adams"}
 iex(4)> User.make([name: "Adams", firstname: "Jon"])
 %User{firstname: "Jon", name: "Adams"}
-iex(5)> %User{name: "Adams", firstname: "Jon"} 
+iex(5)> %User{name: "Adams", firstname: "Jon"}
 %User{firstname: "Jon", name: "Adams"}
 ```
 
-You can also define a struct without types, e.g.:
+You can also define a struct without types, for instance:
 ```elixir
 defmodule QuickStructTest.Pair do
   use QuickStruct, [:first, :second]
 end
 ```
 
-### Resulted code
+### Resulting code
 
-So the QuickStrcut macro is a very shorthand possibility to define a struct, a datatype and enforce all fields. The `User`-struct is equivalent to:
+The QuickStruct macro is a very shorthand option to define a struct, a
+data type and enforce all fields. The `User`-struct is equivalent to:
 ```elixir
 @enforce_keys [:firstname, :name]
 defstruct [:firstname, :name]
@@ -62,15 +63,15 @@ def make(fields) do
 end
 ```
 
-### Create module and struct
+### Creating modules and structs
 
-If you need plenty of different datastructures, you can use
+If you need plenty of different data structures, you can use
 ```elixir
 require QuickStruct
 QuickStruct.define_module(User, [firstname: String.t, name: String.t])
 QuickStruct.define_module(Pair, [:first, :second])
 ```
-to create a module and the struct. So this is shorthand for:
+to create a module and the corresponding struct. So this is shorthand for:
 
 ```elixir
 defmodule User do
