@@ -1,4 +1,4 @@
-# QuickStruct [![Build Status](https://travis-ci.org/active-group/quick-struct.svg?branch=master)](https://travis-ci.org/active-group/quick-struct)
+# QuickStruct [![Build Status](https://travis-ci.org/active-group/quick-struct.svg?branch=master)](https://travis-ci.org/active-group/quick-struct) [![Hex pm](http://img.shields.io/hexpm/v/quick_struct.svg?style=flat)](https://hex.pm/packages/quick_struct)
 
 Macro to create data structures as structs with less boilerplate.
 

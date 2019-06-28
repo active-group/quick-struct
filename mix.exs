@@ -36,15 +36,14 @@ defmodule QuickStruct.MixProject do
   end
 
   defp description do
-    "A macro to create datastructures as structs."
+    "A macro to create data structures as structs."
   end
 
   defp package do
     [
-      name: "QuickStruct",
+      name: "quick_struct",
       licenses: ["MIT"],
-      files: ~w(lib priv .formatter.exs mix.exs README* readme* LICENSE*
-                license* CHANGELOG* changelog* src),
+      files: ~w(lib .formatter.exs mix.exs README* LICENSE*),
       links: %{"GitHub" => "https://github.com/active-group/quick-struct"}
     ]
   end
