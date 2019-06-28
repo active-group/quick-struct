@@ -4,6 +4,7 @@ defmodule QuickStruct.MixProject do
   def project do
     [
       app: :quick_struct,
+      name: "QuickStruct",
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
@@ -13,7 +14,7 @@ defmodule QuickStruct.MixProject do
       source_url: "https://github.com/active-group/quick-struct",
       homepage_url: "https://github.com/active-group/quick-struct",
       docs: [
-        main: "QuickStruct",
+        main: "readme",
         extras: ["README.md"]
       ]
     ]
@@ -42,7 +43,9 @@ defmodule QuickStruct.MixProject do
     [
       name: "QuickStruct",
       licenses: ["MIT"],
-      links: [source_url: "https://github.com/active-group/quick-struct"]
+      files: ~w(lib priv .formatter.exs mix.exs README* readme* LICENSE*
+                license* CHANGELOG* changelog* src),
+      links: %{"GitHub" => "https://github.com/active-group/quick-struct"}
     ]
   end
 end

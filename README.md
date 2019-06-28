@@ -50,7 +50,7 @@ defstruct [:firstname, :name]
 @type t :: %User{firstname: String.t, name: String.t}
 ```
 
-The macro also provides `make`-functions as constructors and other functions, see TODO for further documentation. The generated `make`-functions for the `User`-struct are equivalent to:
+The macro also provides `make`-functions as constructors and other functions, see [QuickStruct](https://hexdocs.pm/quick_struct/QuickStruct.html) for further documentation. The generated `make`-functions for the `User`-struct are equivalent to:
 ```elixir
 @spec make(String.t, String.t) :: User.t
 def make(firstname, name) do
