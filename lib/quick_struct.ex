@@ -68,7 +68,7 @@ defmodule QuickStruct do
       defstruct unquote(fields)
 
       @doc "Creates a #{__MODULE__}-struct from a keyword list."
-      def make([_ | _] = fields) do
+      def make([{_, _} | _] = fields) do
         Kernel.struct!(__MODULE__, fields)
       end
 

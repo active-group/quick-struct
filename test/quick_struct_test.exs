@@ -39,6 +39,13 @@ defmodule QuickStructTest do
   end
 
   require QuickStruct
+  QuickStruct.define_module(SingleKeyword, val: keyword())
+
+  test "single keyword list" do
+    assert SingleKeyword.make([1, 2, 3]).val == [1, 2, 3]
+    assert SingleKeyword.make(val: [1, 2, 3]).val == [1, 2, 3]
+  end
+
   QuickStruct.define_module(Nofields, [])
   ## This is shorthand for:
   # defmodule Nofields do
