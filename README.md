@@ -18,7 +18,7 @@ and run `$ mix deps.get`.
 
 ```elixir
 defmodule User do
-  use QuickStruct, [firstname: String.t, name: String.t]
+  use QuickStruct, fields: [firstname: String.t, name: String.t]
 end
 ```
 
@@ -36,7 +36,7 @@ iex(5)> %User{name: "Adams", firstname: "Jon"}
 You can also define a struct without types, for instance:
 ```elixir
 defmodule QuickStructTest.Pair do
-  use QuickStruct, [:first, :second]
+  use QuickStruct, fields: [:first, :second]
 end
 ```
 
@@ -63,28 +63,50 @@ def make(fields) do
 end
 ```
 
+### Generating predicates
+
+The optional argument `:predicate` can be used to generate a predicate for the struct:
+
+```elixir
+defmodule UserWithPredicate do
+  use QuickStruct, fields: [firstname: String.t, name: String.t], predicate: :user?
+end
+```
+
+```elixir
+iex> user = User.make("Jon", "Adams")
+%User{firstname: "Jon", name: "Adams"}
+iex> User.user?(user)
+true
+iex> User.user?(non_user_struct)
+false
+iex> User.user?(1)
+false
+```
+
+
 ### Creating modules and structs
 
 If you need plenty of different data structures, you can use
 ```elixir
 require QuickStruct
-QuickStruct.define_module(User, [firstname: String.t, name: String.t])
-QuickStruct.define_module(Pair, [:first, :second])
+QuickStruct.define_module(User, fields: [firstname: String.t, name: String.t])
+QuickStruct.define_module(Pair, fields: [:first, :second])
 ```
 to create a module and the corresponding struct. So this is shorthand for:
 
 ```elixir
 defmodule User do
-  use QuickStruct, [firstname: String.t, name: String.t]
+  use QuickStruct, fields: [firstname: String.t, name: String.t]
 end
 defmodule Pair do
-  use QuickStruct, [:first, :second]
+  use QuickStruct, fields: [:first, :second]
 end
 ```
 
 ## License
 
-Copyright © 2019 Active Group GmbH
+Copyright © 2021 Active Group GmbH
 
 This work is free. You can redistribute it and/or modify it under the
 terms of the MIT License. See the LICENSE file for more details.

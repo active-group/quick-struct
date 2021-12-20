@@ -1,8 +1,9 @@
 defmodule QuickStructTest do
   use ExUnit.Case
 
+
   defmodule User do
-    use QuickStruct, firstname: String.t(), name: String.t()
+    use QuickStruct, fields: [firstname: String.t(), name: String.t()], predicate: :user?
   end
 
   test "make user struct" do
@@ -21,7 +22,7 @@ defmodule QuickStructTest do
   end
 
   defmodule Pair do
-    use QuickStruct, [:a, :b]
+    use QuickStruct, fields: [:a, :b]
   end
 
   test "make pair without type specifications" do
@@ -31,7 +32,7 @@ defmodule QuickStructTest do
   end
 
   defmodule Single do
-    use QuickStruct, el: String.t()
+    use QuickStruct, fields: [el: String.t()]
   end
 
   test "make single struct" do
@@ -39,14 +40,14 @@ defmodule QuickStructTest do
   end
 
   require QuickStruct
-  QuickStruct.define_module(SingleKeyword, val: keyword())
+  QuickStruct.define_module(SingleKeyword, fields: [val: keyword()])
 
   test "single keyword list" do
     assert SingleKeyword.make([1, 2, 3]).val == [1, 2, 3]
     assert SingleKeyword.make(val: [1, 2, 3]).val == [1, 2, 3]
   end
 
-  QuickStruct.define_module(Nofields, [])
+  QuickStruct.define_module(Nofields, fields: [])
   ## This is shorthand for:
   # defmodule Nofields do
   #   use QuickStruct, []
@@ -88,19 +89,22 @@ defmodule QuickStructTest do
     refute Nofields.is_struct(int)
   end
 
-  defmodule AreaOrSpace do
-    use QuickStruct,
-      x: float(),
-      y: float(),
-      z: float()
+   defmodule AreaOrSpace do
+     use QuickStruct, fields: [x: float(), y: float(), z: float()]
 
-    QuickStruct.constructor_with_defaults(z: 0)
-  end
+     QuickStruct.constructor_with_defaults(z: 0)
+   end
+ 
+   test "constructor with defaults works" do
+     assert AreaOrSpace.make_with_defaults(x: 4, y: -1) == %AreaOrSpace{x: 4, y: -1, z: 0}
+     assert AreaOrSpace.make(1, 2, 0) == AreaOrSpace.make_with_defaults(x: 1, y: 2)
+   end
+ 
+   test "predicate works" do
+     assert User.user?(User.make("Jon", "Adams"))
+     refute User.user?(12)
+     refute User.user?(AreaOrSpace.make(1, 2, 0))
+   end
 
-  test "constructor with defaults works" do
-    assert AreaOrSpace.make_with_defaults(x: 4, y: -1) == %AreaOrSpace{x: 4, y: -1, z: 0}
-    assert AreaOrSpace.make(1, 2, 0) == AreaOrSpace.make_with_defaults(x: 1, y: 2)
-  end
-
-  doctest QuickStruct
+   doctest QuickStruct
 end

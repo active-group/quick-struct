@@ -62,7 +62,7 @@ defmodule QuickStruct do
   def is_struct_of(_, _), do: false
 
   @doc false
-  defmacro struct(fields, args) do
+  defmacro make_struct(fields, args, opts \\ []) do
     quote do
       @enforce_keys unquote(fields)
       defstruct unquote(fields)
@@ -81,6 +81,30 @@ defmodule QuickStruct do
         Kernel.struct!(__MODULE__, l)
       end
 
+      unquote do
+        if Enum.empty?(args) do
+          # we create another empty constructor to allow make([])
+          quote do
+            def make([]) do
+              Kernel.struct!(__MODULE__, [])
+            end
+          end
+        end
+      end
+      
+
+      unquote do
+        predicate = Keyword.get(opts, :predicate)
+        if predicate do
+          quote do
+            @doc "Returns true if the passed value is a struct of type #{__MODULE__}, else false"
+            @spec unquote(predicate)(any()) :: boolean()
+            def unquote(predicate)(%__MODULE__{}), do: true
+            def unquote(predicate)(_), do: false
+          end
+        end
+      end
+
       @doc """
       Returns true if the given object is a #{__MODULE__}-struct, otherwise false.
 
@@ -90,54 +114,48 @@ defmodule QuickStruct do
       Pair.is_struct(%Pair{first: 1, second: 2}) # => true
       """
       @spec is_struct(any()) :: boolean()
-      def is_struct(object), do: QuickStruct.is_struct_of(object, __MODULE__)
+      def is_struct(object), do: is_struct_of(object, __MODULE__)
+
+      def is_struct_of(a,b), do: QuickStruct.is_struct_of(a,b)
     end
   end
 
-  defmacro __using__([{_, _} | _] = fieldspecs) do
-    fields = Keyword.keys(fieldspecs)
-    types = Keyword.values(fieldspecs)
-    args = Enum.map(fields, &{&1, [], __MODULE__})
-    # This does something similar to Macro.generate_arguments/2, but
-    # with the original field names as arguments (better for generated
-    # documentation of the function).
+  @doc !"""
+  Checks if the field list actually is a keyword list, which means we have specs.
+  """
+  defp has_field_specs?([{_, _} | _]), do: true
+  defp has_field_specs?(_), do: false
 
-    quote do
-      @type t :: %__MODULE__{unquote_splicing(fieldspecs)}
-      @spec make(unquote(fieldspecs)) :: __MODULE__.t()
-      @spec make(unquote_splicing(types)) :: __MODULE__.t()
-      QuickStruct.struct(unquote(fields), unquote(args))
-    end
-  end
 
-  defmacro __using__([]) do
-    quote do
-      defstruct []
+  @doc !"""
+  This does something similar to Macro.generate_arguments/2, but
+  with the original field names as arguments (better for generated
+  documentation of the function).
+  """
+  defp prepare_args(fields), do: Enum.map(fields, &{&1, [], __MODULE__})
 
-      @type t :: %__MODULE__{}
+  defmacro __using__(opts) do
+    maybe_specd_fields = Keyword.get(opts, :fields, [])
 
-      @doc "Creates a #{__MODULE__}-struct."
-      @spec make([]) :: __MODULE__.t()
-      def make([] \\ []) do
-        Kernel.struct!(__MODULE__, [])
-      end
+      if has_field_specs?(maybe_specd_fields) do
+         fields = Keyword.keys(maybe_specd_fields)
+         types = Keyword.values(maybe_specd_fields)
+         args = prepare_args(fields)
+        
+         quote do
+           @type t :: %__MODULE__{unquote_splicing(maybe_specd_fields)}
+           @spec make(unquote(maybe_specd_fields)) :: __MODULE__.t()
+           @spec make(unquote_splicing(types)) :: __MODULE__.t()
 
-      @doc """
-      Returns true if the given object is a #{__MODULE__}-struct, otherwise false.
-
-      ## Example
-
-      """
-      @spec is_struct(any()) :: boolean()
-      def is_struct(object), do: QuickStruct.is_struct_of(object, __MODULE__)
-    end
-  end
-
-  defmacro __using__(fields) when is_list(fields) do
-    args = Enum.map(fields, &{&1, [], __MODULE__})
-
-    quote do
-      QuickStruct.struct(unquote(fields), unquote(args))
+           QuickStruct.make_struct(unquote(fields), unquote(args), unquote(opts))
+         end
+      else
+         fields = maybe_specd_fields
+         args = prepare_args(fields)
+     
+         quote do
+           QuickStruct.make_struct(unquote(fields), unquote(args), unquote(opts))
+         end
     end
   end
 
@@ -161,10 +179,10 @@ defmodule QuickStruct do
   ```
   """
   @spec define_module(module(), keyword()) :: {:defmodule, keyword(), keyword()}
-  defmacro define_module(modulename, fields) do
+  defmacro define_module(modulename, opts \\ []) do
     quote do
       defmodule unquote(modulename) do
-        use QuickStruct, unquote(fields)
+        use QuickStruct, unquote(opts)
       end
     end
   end
