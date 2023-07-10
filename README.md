@@ -18,7 +18,7 @@ and run `$ mix deps.get`.
 
 ```elixir
 defmodule User do
-  use QuickStruct, fields: [firstname: String.t, name: String.t]
+  use QuickStruct, [firstname: String.t, name: String.t]
 end
 ```
 
@@ -36,7 +36,7 @@ iex(5)> %User{name: "Adams", firstname: "Jon"}
 You can also define a struct without types, for instance:
 ```elixir
 defmodule QuickStructTest.Pair do
-  use QuickStruct, fields: [:first, :second]
+  use QuickStruct, [:first, :second]
 end
 ```
 
@@ -69,7 +69,7 @@ The optional argument `:predicate` can be used to generate a predicate for the s
 
 ```elixir
 defmodule UserWithPredicate do
-  use QuickStruct, fields: [firstname: String.t, name: String.t], predicate: :user?
+  use QuickStruct, [firstname: String.t, name: String.t], predicate: :user?
 end
 ```
 
@@ -90,17 +90,17 @@ false
 If you need plenty of different data structures, you can use
 ```elixir
 require QuickStruct
-QuickStruct.define_module(User, fields: [firstname: String.t, name: String.t])
-QuickStruct.define_module(Pair, fields: [:first, :second])
+QuickStruct.define_module(User, [firstname: String.t, name: String.t])
+QuickStruct.define_module(Pair, [:first, :second])
 ```
 to create a module and the corresponding struct. So this is shorthand for:
 
 ```elixir
 defmodule User do
-  use QuickStruct, fields: [firstname: String.t, name: String.t]
+  use QuickStruct, [firstname: String.t, name: String.t]
 end
 defmodule Pair do
-  use QuickStruct, fields: [:first, :second]
+  use QuickStruct, [:first, :second]
 end
 ```
 
